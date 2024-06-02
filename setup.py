@@ -381,11 +381,9 @@ def get_requirements() -> List[str]:
 
 
 ext_modules = []
-cmd_class = {}
 
 if _is_cuda() or _is_hip():
     ext_modules.append(CMakeExtension(name="vllm._moe_C"))
-    cmd_class = {"build_ext": cmake_build_ext}
 
 if not _is_neuron():
     ext_modules.append(CMakeExtension(name="vllm._C"))
@@ -430,6 +428,6 @@ setup(
     extras_require={
         "tensorizer": ["tensorizer>=2.9.0"],
     },
-    cmdclass=cmd_class,
+    cmdclass={"build_ext": cmake_build_ext} if not _is_neuron() else {},
     package_data=package_data,
 )
